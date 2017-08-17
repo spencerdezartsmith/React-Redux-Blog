@@ -1,26 +1,36 @@
 import React, { Component } from 'react'
 import { Field, reduxForm } from 'redux-form'
+import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { createPost } from '../actions'
 
 class PostsNew extends Component {
   renderInputField(field) {
+    // destructuring nested properties
+    const { meta: { touched, error } } = field
+    const className = `form-group ${touched && error ? 'has-danger' : ''}`
     // This property is added to the field component by redux form
     // Field automatically adds any errors from the field name prop to
     // the field.meta.error object
     return (
-      <div className='form-group'>
+      <div className={className}>
         <label>{field.label}</label>
         <input
           className='form-control'
           type='text'
           {...field.input}
         />
-        {field.meta.touched ? field.meta.error : ''}
+        <div className='text-help'>
+          {touched ? error : ''}
+        </div>
       </div>
     )
   }
 
   onSubmit(values) {
-    console.log(values);
+    this.props.createPost(values, () => {
+      this.props.history.push('/')  
+    })
   }
 
   render() {
@@ -46,6 +56,7 @@ class PostsNew extends Component {
             component={this.renderInputField}
           />
           <button type='submit' className='btn btn-primary'>Submit</button>
+          <Link to='/' className='btn btn-default'>Cancel</Link>
         </form>
       </div>
     )
@@ -70,10 +81,11 @@ function validate(values) {
   return errors
 }
 
+// If you had multiple forms you would have another
+// export statement in that component with the other forms unique identifier.
 export default reduxForm({
   validate,
   form: 'PostNewForm' // unique string for the form. If multiple forms redux form will handle that
-})(PostsNew)
-
-// If you had multiple forms you would have another
-// export statement in that component with the other forms unique identifier.
+})(
+  connect(null, { createPost })(PostsNew)
+)
