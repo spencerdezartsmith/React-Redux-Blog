@@ -2,3 +2,10 @@ form a {
   border: 1px solid #0275d8 !important;
   margin-left: 10px !important;
 }
+
+.show-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
